@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogOut, LayoutDashboard, Database, CloudUpload } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
+import Logo from "../assets/Logo.png";
 
 const HeaderBar = () => {
   const { user, logout } = useAuth();
@@ -27,7 +28,7 @@ const HeaderBar = () => {
               className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2"
             >
               <img
-                src="/src/assets/Logo.png"
+                src={Logo}
                 alt="Logo"
                 className="w-7 h-7 sm:w-8 sm:h-8 mr-2"
               />
