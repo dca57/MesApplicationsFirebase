@@ -31,7 +31,7 @@ const HeaderBar = () => {
                 alt="Logo"
                 className="w-8 h-8 mr-2"
               />
-              APP01
+              APP01 - Template
             </Link>
           </div>
 
