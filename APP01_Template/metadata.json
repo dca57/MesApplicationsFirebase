@@ -1,0 +1,5 @@
+{
+  "name": "MonAPP_Vite_Firebase",
+  "description": "Template complet Vite + React + TypeScript + Tailwind + Firebase avec Authentification, Firestore et Storage.",
+  "requestFramePermissions": []
+}
