@@ -38,7 +38,7 @@ const App = () => {
 
                 {/* Private Routes */}
                 <Route element={<ProtectedRoute />}>
-                  <Route path="/firestore" element={<FirestoreExample />} />
+                  <Route path="/" element={<FirestoreExample />} />
                 </Route>
 
                 {/* Private Routes */}
