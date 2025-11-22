@@ -17,7 +17,7 @@ import Login from "./pages_template/Login";
 import Register from "./pages_template/Register";
 import ResetPassword from "./pages_template/ResetPassword";
 // Pages Applications
-import FirestoreExample from "./pages/FirestoreExample";
+import Accueil from "./pages/Accueil";
 import Listes from "./pages/Listes";
 import Produits from "./pages/Produits";
 import ListesDetails from "./pages/Listes_Details";
@@ -36,9 +36,9 @@ const App = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
 
-                {/* Private Routes */}
+                {/* Private Routes OBLIGATOIRE d'avoir une route sur / (même une page bidon) */}
                 <Route element={<ProtectedRoute />}>
-                  <Route path="/" element={<FirestoreExample />} />
+                  <Route path="/" element={<Listes />} />
                 </Route>
 
                 {/* Private Routes */}

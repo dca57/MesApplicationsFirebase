@@ -37,7 +37,7 @@ const App = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
 
-                {/* Private Routes */}
+                {/* Private Routes OBLIGATOIRE d'avoir une route sur / (même une page bidon) */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/" element={<Dashboard />} />
                   <Route
