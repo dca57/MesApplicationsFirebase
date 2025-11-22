@@ -8,6 +8,7 @@ import {
 import { Plus, Save, X, Trash2, ChevronLeft, CircleOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
+// import { APP_PREFIX } from "../firebase/config"; // Suppression de l'import inutile
 
 interface ModalProps {
   isOpen: boolean;
@@ -57,8 +58,16 @@ interface ListItem {
   }[];
 }
 
-const LISTES_COLLECTION_NAME = "Listes";
-const PRODUITS_COLLECTION_NAME = "Produits";
+interface Rayon { // Nouvelle interface pour Rayon
+  id: string;
+  nom: string;
+  userId: string;
+  order: number;
+}
+
+const LISTES_COLLECTION_NAME = "Listes"; // Suppression de APP_PREFIX
+const PRODUITS_COLLECTION_NAME = "Produits"; // Suppression de APP_PREFIX
+const RAYONS_COLLECTION_NAME = "Rayons"; // Suppression de APP_PREFIX
 
 const ListesDetails = () => {
   const { user } = useAuth();
@@ -66,9 +75,11 @@ const ListesDetails = () => {
   const navigate = useNavigate();
   const [currentList, setCurrentList] = useState<ListItem | null>(null);
   const [availableProducts, setAvailableProducts] = useState<Produit[]>([]);
+  const [rayons, setRayons] = useState<Rayon[]>([]); // Nouvel état pour les rayons
   const [selectedProductToAdd, setSelectedProductToAdd] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Nouveau state pour le terme de recherche
 
   useEffect(() => {
     if (!user || !id) return;
@@ -92,25 +103,36 @@ const ListesDetails = () => {
       }
     );
 
+    // Abonnement temps réel aux rayons
+    const unsubscribeRayons = subscribeToCollection(
+      RAYONS_COLLECTION_NAME,
+      (data) => {
+        setRayons(
+          (data as Rayon[]).filter((rayon) => rayon.userId === user.uid)
+        );
+      }
+    );
+
     return () => {
       unsubscribeList();
       unsubscribeProducts();
+      unsubscribeRayons();
     };
   }, [user, id]);
 
-  const handleAddProductToList = async () => {
-    if (!selectedProductToAdd || !currentList) return;
+  const handleAddProductToList = async (productId: string) => {
+    if (!productId || !currentList) return;
 
     const listToUpdate = { ...currentList };
     const existingProductIndex = listToUpdate.produits.findIndex(
-      (p) => p.produitId === selectedProductToAdd
+      (p) => p.produitId === productId
     );
 
     const updatedProducts = [...listToUpdate.produits];
 
     if (existingProductIndex === -1) {
       updatedProducts.push({
-        produitId: selectedProductToAdd,
+        produitId: productId,
         achete: false,
       });
     }
@@ -119,8 +141,9 @@ const ListesDetails = () => {
       await updateDocument(LISTES_COLLECTION_NAME, currentList.id, {
         produits: updatedProducts,
       });
-      setSelectedProductToAdd("");
-      setShowProductModal(false);
+      setSearchTerm(""); // Réinitialiser la recherche après l'ajout
+      // setSelectedProductToAdd(""); // Suppression de setSelectedProductToAdd car non utilisé avec les cards
+      // setShowProductModal(false); // Suppression de la fermeture de la modale
     } catch (error) {
       alert("Erreur lors de l'ajout du produit à la liste");
     }
@@ -178,10 +201,107 @@ const ListesDetails = () => {
     }
   };
 
-  const getProductName = (produitId: string) => {
+  const getProductNameWithRayon = (produitId: string) => {
     const produit = availableProducts.find((p) => p.id === produitId);
-    return produit ? produit.nom : "Produit inconnu";
+    if (!produit) return "Produit inconnu";
+    const rayon = rayons.find((r) => r.id === produit.rayonId);
+    return `${produit.nom} ${rayon ? `(${rayon.nom})` : ""}`;
   };
+
+  const getSortedListProducts = () => {
+    if (!currentList || !availableProducts || !rayons) return [];
+
+    const productsInListWithDetails = currentList.produits.map((item) => {
+      const productDetail = availableProducts.find((p) => p.id === item.produitId);
+      const rayonDetail = rayons.find((r) => r.id === productDetail?.rayonId);
+      return {
+        ...item,
+        nom: productDetail?.nom || "",
+        rayonNom: rayonDetail?.nom || "",
+      };
+    });
+
+    return productsInListWithDetails.sort((a, b) => {
+      const rayonA = a.rayonNom || ""; // S'assure que c'est une chaîne vide si null/undefined
+      const rayonB = b.rayonNom || ""; // S'assure que c'est une chaîne vide si null/undefined
+      const nomA = a.nom || "";
+      const nomB = b.nom || "";
+
+      // Fonction d'aide pour déterminer la priorité de tri des rayons spéciaux
+      const getRayonSortOrder = (rayonName: string) => {
+        if (rayonName === "Autre") return 2; // 'Autre' vient après les rayons normaux et avant l'absence de rayon
+        if (rayonName === "") return 3;    // Absence de rayon vient en dernier
+        return 1;                        // Rayons normaux viennent en premier
+      };
+
+      const orderA = getRayonSortOrder(rayonA);
+      const orderB = getRayonSortOrder(rayonB);
+
+      // Comparaison des priorités de rayon
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+
+      // Si la priorité est la même (ou pour les rayons normaux), tri par nom de rayon
+      if (rayonA.localeCompare(rayonB) !== 0) {
+        return rayonA.localeCompare(rayonB);
+      }
+      // Enfin, tri par nom de produit
+      return nomA.localeCompare(nomB);
+    });
+  };
+
+  // Fonction de tri et de filtrage pour les produits disponibles
+  const getSortedAndFilteredAvailableProducts = () => {
+    if (!availableProducts || !currentList || !rayons) return [];
+
+    let filteredProducts = availableProducts.filter(
+      (product) =>
+        product.userId === user?.uid && // S'assurer que ce sont les produits de l'utilisateur
+        !currentList.produits.some((item) => item.produitId === product.id) && // Exclure les produits déjà dans la liste
+        (product.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (product.rayonId &&
+            rayons.find((r) => r.id === product.rayonId)?.nom.toLowerCase().includes(searchTerm.toLowerCase())))
+    );
+
+    return filteredProducts.sort((a, b) => {
+      const rayonA = rayons.find((r) => r.id === a.rayonId)?.nom || ""; // S'assure que c'est une chaîne vide si null/undefined
+      const rayonB = rayons.find((r) => r.id === b.rayonId)?.nom || ""; // S'assure que c'est une chaîne vide si null/undefined
+      const nomA = a.nom || "";
+      const nomB = b.nom || "";
+
+      // Fonction d'aide pour déterminer la priorité de tri des rayons spéciaux
+      const getRayonSortOrder = (rayonName: string) => {
+        if (rayonName === "Autre") return 2; // 'Autre' vient après les rayons normaux et avant l'absence de rayon
+        if (rayonName === "") return 3;    // Absence de rayon vient en dernier
+        return 1;                        // Rayons normaux viennent en premier
+      };
+
+      const orderA = getRayonSortOrder(rayonA);
+      const orderB = getRayonSortOrder(rayonB);
+
+      // Comparaison des priorités de rayon
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+
+      // Si la priorité est la même (ou pour les rayons normaux), tri par nom de rayon
+      if (rayonA.localeCompare(rayonB) !== 0) {
+        return rayonA.localeCompare(rayonB);
+      }
+      // Enfin, tri par nom de produit
+      return nomA.localeCompare(nomB);
+    });
+  };
+
+  const sortedAndFilteredAvailableProducts = getSortedAndFilteredAvailableProducts();
+
+  const sortedListProducts = getSortedListProducts();
+
+  // Calcul du progrès pour la barre
+  const totalProductsInList = currentList?.produits.length || 0;
+  const checkedProductsInList = currentList?.produits.filter(p => p.achete).length || 0;
+  const progressPercentage = totalProductsInList > 0 ? (checkedProductsInList / totalProductsInList) * 100 : 0;
 
   if (!currentList) {
     return (
@@ -222,6 +342,21 @@ const ListesDetails = () => {
         </button>
       </div>
 
+      {/* Barre de progression */}
+      {totalProductsInList > 0 && (
+        <div className="mb-4 sm:mb-8 flex items-center gap-2"> {/* New flex container */}
+          <div className="flex-grow bg-slate-200 dark:bg-slate-700 rounded-full h-8 relative overflow-hidden shadow-inner"> {/* Progress bar container, increased height */}
+            <div
+              className="bg-green-500 h-full absolute left-0 top-0 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
+          </div>
+          <span className="text-sm font-bold text-slate-700 dark:text-slate-400"> {/* Text outside the bar */}
+            {checkedProductsInList} / {totalProductsInList}
+          </span>
+        </div>
+      )}
+
       {/* Liste des produits dans la liste */}
       {currentList.produits.length > 0 && (
         <div className="bg-slate-200 dark:bg-slate-800 p-4 sm:p-6 rounded-lg shadow-md border border-slate-700 dark:border-slate-400">
@@ -229,7 +364,7 @@ const ListesDetails = () => {
             Produits de la liste :
           </h4>
           <ul className="grid gap-2">
-            {currentList.produits.map((p) => (
+            {sortedListProducts.map((p) => (
               <li
                 key={p.produitId}
                 className="flex items-center justify-between bg-slate-300 dark:bg-slate-700 p-2 rounded-md cursor-pointer"
@@ -248,7 +383,7 @@ const ListesDetails = () => {
                     readOnly // Rendu en lecture seule car le clic est sur le li parent
                     className="form-checkbox h-4 w-4 text-blue-600 rounded focus:ring-blue-500 dark:bg-slate-600 dark:border-slate-500"
                   />
-                  {getProductName(p.produitId)}
+                  {getProductNameWithRayon(p.produitId)}
                 </span>
                 <div className="flex gap-1">
                   <button
@@ -272,35 +407,34 @@ const ListesDetails = () => {
         onClose={() => setShowProductModal(false)}
         title="Ajouter un produit à la liste"
       >
-        <div className="flex flex-col sm:flex-row gap-2 items-end">
-          <div className="flex-grow w-full">
-            <label
-              htmlFor="productToAdd"
-              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-400 mb-1"
-            >
-              Sélectionner un produit
-            </label>
-            <select
-              id="productToAdd"
-              value={selectedProductToAdd}
-              onChange={(e) => setSelectedProductToAdd(e.target.value)}
-              className="w-full px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            >
-              <option value="">Sélectionner un produit</option>
-              {availableProducts.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.nom}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Rechercher un produit ou un rayon..."
+            className="w-full px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="grid gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+            {sortedAndFilteredAvailableProducts.length > 0 ? (
+              sortedAndFilteredAvailableProducts.map((product) => (
+                <div
+                  key={product.id}
+                  onClick={() => handleAddProductToList(product.id)}
+                  className="flex items-center justify-between bg-slate-100 dark:bg-slate-700 p-3 rounded-md shadow-sm cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                >
+                  <span className="text-sm text-slate-700 dark:text-slate-200">
+                    {getProductNameWithRayon(product.id)}
+                  </span>
+                  <Plus size={16} className="text-blue-600" />
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-slate-500 dark:text-slate-400 text-sm italic">
+                Aucun produit disponible ou correspondant à votre recherche.
+              </p>
+            )}
           </div>
-          <button
-            onClick={handleAddProductToList}
-            className="bg-green-600 hover:bg-green-700 text-slate-300 dark:text-slate-300 py-1.5 px-3 sm:py-2 sm:px-4 rounded-md transition-colors flex items-center gap-1 disabled:opacity-50 text-sm"
-            disabled={!selectedProductToAdd}
-          >
-            <Plus size={16} /> Ajouter
-          </button>
         </div>
       </Modal>
     </div>

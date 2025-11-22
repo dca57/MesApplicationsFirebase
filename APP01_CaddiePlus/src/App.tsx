@@ -17,10 +17,11 @@ import Login from "./pages_template/Login";
 import Register from "./pages_template/Register";
 import ResetPassword from "./pages_template/ResetPassword";
 // Pages Applications
-import Accueil from "./pages/Accueil";
 import Listes from "./pages/Listes";
 import Produits from "./pages/Produits";
 import ListesDetails from "./pages/Listes_Details";
+import Admin_Settings from "./pages_template/Admin_Settings";
+import User_Settings from "./pages_template/User_Settings";
 
 const App = () => {
   return (
@@ -54,6 +55,16 @@ const App = () => {
                 {/* Private Routes */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/produits" element={<Produits />} />
+                </Route>
+
+                {/* Private Routes for Admin Settings */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/admin-settings" element={<Admin_Settings />} />
+                </Route>
+
+                {/* Private Routes for User Settings */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/user-settings" element={<User_Settings />} />
                 </Route>
 
                 {/* Fallback */}

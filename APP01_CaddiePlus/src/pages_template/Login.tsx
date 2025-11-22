@@ -216,46 +216,7 @@ const Login = () => {
         </button>
 
         {/* Debug Info Box */}
-        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700">
-          <p className="text-xs font-bold text-slate-500 uppercase mb-2 text-center">
-            Aide à la configuration
-          </p>
-
-          <div className="space-y-2 text-xs">
-            <div className="flex flex-col gap-1 p-2 bg-slate-100 dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">
-              <span className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-                <Globe size={12} /> Domaine à autoriser dans Firebase :
-              </span>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 bg-white dark:bg-slate-800 p-1.5 rounded border border-slate-300 dark:border-slate-600 text-blue-600 font-mono overflow-hidden text-ellipsis whitespace-nowrap">
-                  {currentDomain}
-                </code>
-                <button
-                  onClick={() => navigator.clipboard.writeText(currentDomain)}
-                  className="p-1.5 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                  title="Copier"
-                >
-                  Copier
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-2 bg-slate-100 dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">
-              <span className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-                <Key size={12} /> État Config :
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded font-bold ${
-                  isConfigured
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {isConfigured ? "OK" : "MANQUANTE"}
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* Supprimé : Aide à la configuration */}
 
         <div className="mt-6 text-center text-sm">
           <span className="text-slate-600 dark:text-slate-400">

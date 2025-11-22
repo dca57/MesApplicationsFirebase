@@ -7,6 +7,7 @@ import {
   onSnapshot,
   QuerySnapshot,
   DocumentData,
+  deleteField,
 } from "firebase/firestore";
 import { db } from "./config";
 import { APP_PREFIX } from "./config";
@@ -70,4 +71,20 @@ export const subscribeToCollection = (
     }));
     callback(data);
   });
+};
+
+export const removeFieldFromDocument = async (
+  collectionName: string,
+  id: string,
+  fieldName: string
+) => {
+  const colName = APP_PREFIX + collectionName;
+  try {
+    const docRef = doc(db, colName, id);
+    await updateDoc(docRef, { [fieldName]: deleteField() });
+    return { success: true };
+  } catch (error) {
+    console.error(`Error removing field '${fieldName}' from document: `, error);
+    throw error;
+  }
 };

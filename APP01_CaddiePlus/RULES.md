@@ -13,3 +13,8 @@
 ## 🚀 Style de l'application
 
 - Il faut veiller à conserver un style cohérent dans toute l'application entre les différentes pages.
+
+## AUTRES
+
+- Toute suppression doit passer par une demande de confirmation dans une modale sauf si le prompt précise le contraire
+- Ne jamais utiliser une alerte js pour une confirmation de suppression, mais une fenêtre modale.

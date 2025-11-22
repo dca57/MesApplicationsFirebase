@@ -3,6 +3,17 @@
 Template professionnel React + Vite + Firebase + TailwindCSS.
 Ce projet inclut une authentification complète, un système de thème sombre persistant, et des exemples d'intégration Firestore et Storage.
 
+## 🚀 FICHIERS DU TEMPLATE à conserver:
+
+src/assets/
+src/components/
+src/context
+src/firebase
+src/hooks/
+src/pages_template
+src/App.tsx
+src/declaration.d.ts
+
 ## 🚀 Fonctionnalités
 
 - **Authentification** : Email/Password + Google Auth (Login, Register, Reset Password).
