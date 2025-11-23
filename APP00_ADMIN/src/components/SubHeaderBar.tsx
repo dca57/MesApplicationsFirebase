@@ -5,6 +5,7 @@ import {
   Database,
   CloudUpload,
   SquareStack,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -39,6 +40,22 @@ const SubHeaderBar = () => {
           >
             <CloudUpload size={18} /> Storage
           </Link>
+
+          <Link
+            to="/user-settings"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-500 flex items-center gap-2"
+          >
+            <Settings size={18} /> Mes Préférences
+          </Link>
+
+          {user.uid === "8U8fY8clg3OSWHO45j7YMbsT8lg1" && (
+            <Link
+              to="/admin-settings"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-500 flex items-center gap-2"
+            >
+              <Settings size={18} className="text-red-800" /> Paramètres Admin
+            </Link>
+          )}
         </div>
       </div>
     </nav>

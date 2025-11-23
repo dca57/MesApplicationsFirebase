@@ -84,17 +84,20 @@ const MesApplications = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+    <div className="space-y-2 animate-fade-in">
+      <div className="bg-slate-200 dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-300 dark:border-slate-700">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-500 mb-2">
           Mes Applications Firebase - CRUD
-        </h2>
-        <p className="text-slate-600 dark:text-slate-400">
-          Ajoutez, modifiez et supprimez des applications.
+        </h1>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">
+          Listez les différentes appications gérés dans l'écosystème Firebase.
         </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 mb-8">
+      <div className="bg-slate-200 dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-300 dark:border-slate-700 mb-8">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          Ajouter une nouvelle application
+        </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-end">
           <div className="flex w-full gap-4">
             <div className="w-1/3">
@@ -156,9 +159,9 @@ const MesApplications = () => {
               <button
                 type="button"
                 onClick={cancelEdit}
-                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 p-2 rounded-md transition-colors"
+                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 p-2 rounded-md transition-colors flex items-center gap-2"
               >
-                <X size={20} />
+                <X size={20} /> Annuler
               </button>
             )}
             <button
@@ -173,52 +176,58 @@ const MesApplications = () => {
         </form>
       </div>
 
-      <div className="grid gap-4">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center animate-fade-in"
-          >
-            <div>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white">
-                {item.prefix} : {item.nom}
-              </h3>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() =>
-                  window.open(
-                    /^https?:\/\//.test(item.url)
-                      ? item.url
-                      : `https://${item.url}`,
-                    "_blank"
-                  )
-                }
-                className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
-              >
-                <Link2 size={18} />
-              </button>
-              <button
-                onClick={() => startEdit(item)}
-                className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
-              >
-                <Edit2 size={18} />
-              </button>
+      <div className="bg-slate-200 dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-300 dark:border-slate-700">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          Liste des applications
+        </h2>
 
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-              >
-                <Trash2 size={18} />
-              </button>
+        <div className="grid gap-2">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="bg-slate-300 dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-400 dark:border-slate-700 flex justify-between items-center animate-fade-in"
+            >
+              <div>
+                <h3 className="font-bold text-lg text-slate-900 dark:text-white">
+                  {item.prefix} : {item.nom}
+                </h3>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() =>
+                    window.open(
+                      /^https?:\/\//.test(item.url)
+                        ? item.url
+                        : `https://${item.url}`,
+                      "_blank"
+                    )
+                  }
+                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors flex items-center gap-2"
+                >
+                  <Link2 size={18} /> Ouvrir
+                </button>
+                <button
+                  onClick={() => startEdit(item)}
+                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors flex items-center gap-2"
+                >
+                  <Edit2 size={18} /> Modifier
+                </button>
+
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors flex items-center gap-2"
+                >
+                  <Trash2 size={18} /> Supprimer
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-        {items.length === 0 && (
-          <div className="text-center py-10 text-slate-500 dark:text-slate-400 italic">
-            Aucun élément trouvé. Ajoutez-en un !
-          </div>
-        )}
+          ))}
+          {items.length === 0 && (
+            <div className="text-center py-10 text-slate-500 dark:text-slate-400 italic">
+              Aucun élément trouvé. Ajoutez-en un !
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -48,17 +48,17 @@ const StorageExample = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+    <div className="space-y-2 animate-fade-in">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-500 mb-2">
           Firebase Storage
-        </h2>
-        <p className="text-slate-600 dark:text-slate-400">
+        </h1>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">
           Upload de fichiers avec prévisualisation et lien public.
         </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 mb-8">
         <div className="p-8">
           <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-12 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors relative group">
             <input

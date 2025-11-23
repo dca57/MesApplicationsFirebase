@@ -70,9 +70,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-2 animate-fade-in">
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-500">
           Bienvenue,{" "}
           <span className="text-blue-600 dark:text-blue-400">
             {user?.displayName || user?.email}

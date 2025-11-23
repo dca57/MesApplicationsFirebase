@@ -19,16 +19,16 @@ const HeaderBar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-slate-200 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 shadow-sm sticky top-0 z-50">
+      <div className="px-4 sm:px-4 lg:px-4">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link
               to="/"
-              className="text-xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2"
+              className="text-4xl font-bold text-slate-900 dark:text-slate-500 flex items-center gap-2"
             >
-              <img src={Logo} alt="Logo" className="w-8 h-8 mr-2" />
-              Administration des applications Firebase
+              <img src={Logo} alt="Logo" className="w-12 h-12 mr-2" />
+              Admin+ - Apps Firebase
             </Link>
           </div>
 
@@ -42,7 +42,7 @@ const HeaderBar = () => {
             <ThemeToggle />
             {user && (
               <div className="flex items-center gap-4">
-                <span className="hidden sm:inline text-sm text-slate-500 dark:text-slate-400">
+                <span className="hidden sm:inline text-sm text-blue-800 dark:text-blue-300">
                   {user.email}
                 </span>
                 <button
