@@ -1,13 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  LogOut,
-  LayoutDashboard,
-  Database,
-  CloudUpload,
-  Settings,
-  SquareStack,
-} from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
 import Logo from "../assets/Logo.png";
@@ -16,6 +9,7 @@ const HeaderBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null); // Add this line
 
   const handleLogout = async () => {
     try {
@@ -29,6 +23,23 @@ const HeaderBar = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  // Add this useEffect hook
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   return (
     <nav className="bg-slate-300 dark:bg-slate-700 border-b border-slate-400 dark:border-slate-600 shadow-sm sticky top-0 z-50">
@@ -52,7 +63,12 @@ const HeaderBar = () => {
 
           <div className="flex items-center gap-4">
             {user && (
-              <div className="relative flex items-center gap-4">
+              <div
+                className="relative flex items-center gap-4"
+                ref={dropdownRef}
+              >
+                {" "}
+                {/* Add ref here */}
                 <button
                   onClick={toggleDropdown}
                   className="hidden sm:inline text-sm text-blue-800 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none"
