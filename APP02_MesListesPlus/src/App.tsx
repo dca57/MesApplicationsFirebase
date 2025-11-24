@@ -17,12 +17,9 @@ import Login from "./pages_template/Login";
 import Register from "./pages_template/Register";
 import ResetPassword from "./pages_template/ResetPassword";
 // Pages Applications
-import Dashboard from "./pages/Dashboard";
-import MesApplications from "./pages/MesApplications";
-import FirestoreExample from "./pages/FirestoreExample";
-import StorageExample from "./pages/StorageExample";
+import MesListes from "./pages/MesListes";
+import ListeDetails from "./pages/ListeDetails";
 
-import LLM from "./pages_template/LLM";
 import Admin_Settings from "./pages_template/Admin_Settings";
 import User_Settings from "./pages_template/User_Settings";
 import Admin_LightDarkMode from "./pages_template/Admin_LightDarkMode";
@@ -32,10 +29,10 @@ const App = () => {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-300">
+          <div className="min-h-screen bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white transition-colors duration-300">
             <HeaderBar />
-            <LeftBar />
-            <div className="ml-64">
+
+            <div className="ml-00">
               <main className="px-2 py-2">
                 <Routes>
                   {/* Public Routes */}
@@ -45,30 +42,20 @@ const App = () => {
 
                   {/* Private Routes OBLIGATOIRE d'avoir une route sur / (même une page bidon) */}
                   <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/" element={<MesListes />} />
                   </Route>
 
                   {/* Private Routes */}
                   <Route element={<ProtectedRoute />}>
-                    <Route
-                      path="/mesappsfirebase"
-                      element={<MesApplications />}
-                    />
+                    <Route path="/meslistes" element={<MesListes />} />
                   </Route>
 
                   {/* Private Routes for List Details */}
                   <Route element={<ProtectedRoute />}>
-                    <Route path="/firestore" element={<FirestoreExample />} />
-                  </Route>
-
-                  {/* Private Routes */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/storage" element={<StorageExample />} />
-                  </Route>
-
-                  {/* Private Routes */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/llm" element={<LLM />} />
+                    <Route
+                      path="/listedetails/:id"
+                      element={<ListeDetails />}
+                    />
                   </Route>
 
                   {/* Private Routes for Admin Settings */}

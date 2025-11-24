@@ -20,31 +20,13 @@ const LeftBar = () => {
             to="/"
             className="text-slate-900 dark:text-slate-500 hover:text-blue-500 flex items-center gap-2 text-lg font-bold hover:bg-blue-100 dark:hover:bg-slate-700 p-2 rounded-md"
           >
-            <LayoutDashboard size={24} /> Dashboard
+            <LayoutDashboard size={24} /> Mes Listes
           </Link>
           <Link
-            to="/mesappsfirebase"
+            to="/listedetails"
             className="text-slate-900 dark:text-slate-500 hover:text-blue-500 flex items-center gap-2 text-lg font-bold hover:bg-blue-100 dark:hover:bg-slate-700 p-2 rounded-md"
           >
-            <SquareStack size={24} /> Mes Applications
-          </Link>
-          <Link
-            to="/firestore"
-            className="text-slate-900 dark:text-slate-500 hover:text-blue-500 flex items-center gap-2 text-lg font-bold hover:bg-blue-100 dark:hover:bg-slate-700 p-2 rounded-md"
-          >
-            <Database size={24} /> Firestore
-          </Link>
-          <Link
-            to="/storage"
-            className="text-slate-900 dark:text-slate-500 hover:text-blue-500 flex items-center gap-2 text-lg font-bold hover:bg-blue-100 dark:hover:bg-slate-700 p-2 rounded-md"
-          >
-            <CloudUpload size={24} /> Storage
-          </Link>
-          <Link
-            to="/llm"
-            className="text-slate-900 dark:text-slate-500 hover:text-blue-500 flex items-center gap-2 text-lg font-bold hover:bg-blue-100 dark:hover:bg-slate-700 p-2 rounded-md"
-          >
-            <CloudUpload size={24} /> Prompt IA
+            <SquareStack size={24} /> Liste Details
           </Link>
         </div>
 
